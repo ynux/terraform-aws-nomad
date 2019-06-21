@@ -14,8 +14,8 @@ resource "aws_autoscaling_group" "autoscaling_group" {
   launch_configuration = "${aws_launch_configuration.launch_configuration.name}"
 
   name                = "${var.asg_name}"
-  availability_zones  = ["${var.availability_zones}"]
-  vpc_zone_identifier = ["${var.subnet_ids}"]
+  availability_zones  = "${var.availability_zones}"
+  vpc_zone_identifier = "${var.subnet_ids}"
 
   min_size             = "${var.min_size}"
   max_size             = "${var.max_size}"
@@ -26,7 +26,7 @@ resource "aws_autoscaling_group" "autoscaling_group" {
   health_check_grace_period = "${var.health_check_grace_period}"
   wait_for_capacity_timeout = "${var.wait_for_capacity_timeout}"
 
-  tags = [
+  tags = flatten([
     {
       key                 = "Name"
       value               = "${var.cluster_name}"
@@ -38,7 +38,7 @@ resource "aws_autoscaling_group" "autoscaling_group" {
       propagate_at_launch = true
     },
     "${var.tags}",
-  ]
+  ])
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ resource "aws_launch_configuration" "launch_configuration" {
 
   iam_instance_profile        = "${aws_iam_instance_profile.instance_profile.name}"
   key_name                    = "${var.ssh_key_name}"
-  security_groups             = ["${concat(list(aws_security_group.lc_security_group.id), var.security_groups)}"]
+  security_groups             = "${concat(list(aws_security_group.lc_security_group.id), var.security_groups)}"
   placement_tenancy           = "${var.tenancy}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
 
@@ -64,8 +64,6 @@ resource "aws_launch_configuration" "launch_configuration" {
     volume_size           = "${var.root_volume_size}"
     delete_on_termination = "${var.root_volume_delete_on_termination}"
   }
-
-  ebs_block_device = ["${var.ebs_block_devices}"]
 
   # Important note: whenever using a launch configuration with an auto scaling group, you must set
   # create_before_destroy = true. However, as soon as you set create_before_destroy = true in one resource, you must
@@ -101,7 +99,7 @@ resource "aws_security_group_rule" "allow_ssh_inbound" {
   from_port   = "${var.ssh_port}"
   to_port     = "${var.ssh_port}"
   protocol    = "tcp"
-  cidr_blocks = ["${var.allowed_ssh_cidr_blocks}"]
+  cidr_blocks = "${var.allowed_ssh_cidr_blocks}"
 
   security_group_id = "${aws_security_group.lc_security_group.id}"
 }
@@ -124,7 +122,7 @@ module "security_group_rules" {
   source = "../nomad-security-group-rules"
 
   security_group_id           = "${aws_security_group.lc_security_group.id}"
-  allowed_inbound_cidr_blocks = ["${var.allowed_inbound_cidr_blocks}"]
+  allowed_inbound_cidr_blocks = "${var.allowed_inbound_cidr_blocks}"
 
   http_port = "${var.http_port}"
   rpc_port  = "${var.rpc_port}"

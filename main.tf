@@ -56,7 +56,7 @@ data "aws_ami" "nomad_consul" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "servers" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.3.1"
+  source = "github.com/ynux/terraform-aws-consul//modules/consul-cluster?ref=terraform_012"
 
   cluster_name  = "${var.cluster_name}-server"
   cluster_size  = "${var.num_servers}"
@@ -115,7 +115,7 @@ module "nomad_security_group_rules" {
 data "template_file" "user_data_server" {
   template = "${file("${path.module}/examples/root-example/user-data-server.sh")}"
 
-  vars {
+  vars = {
     cluster_tag_key   = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.cluster_tag_value}"
     num_servers       = "${var.num_servers}"
@@ -175,7 +175,7 @@ module "clients" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "consul_iam_policies" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-iam-policies?ref=v0.3.1"
+  source = "github.com/ynux/terraform-aws-consul//modules/consul-iam-policies?ref=terraform_012"
 
   iam_role_id = "${module.clients.iam_role_id}"
 }
@@ -188,7 +188,7 @@ module "consul_iam_policies" {
 data "template_file" "user_data_client" {
   template = "${file("${path.module}/examples/root-example/user-data-client.sh")}"
 
-  vars {
+  vars = {
     cluster_tag_key   = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.cluster_tag_value}"
   }
