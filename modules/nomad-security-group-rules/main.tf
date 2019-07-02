@@ -71,8 +71,8 @@ resource "aws_security_group_rule" "allow_kibana" {
 }
 resource "aws_security_group_rule" "allow_beats2logstash" {
   type        = "ingress"
-  from_port   = "1704"
-  to_port     = "1704"
+  from_port   = "5044"
+  to_port     = "5044"
   protocol    = "tcp"
   cidr_blocks = "${var.allowed_inbound_cidr_blocks}"
 
