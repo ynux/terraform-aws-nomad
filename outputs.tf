@@ -57,4 +57,3 @@ output "nomad_servers_cluster_tag_key" {
 output "nomad_servers_cluster_tag_value" {
   value = "${module.servers.cluster_tag_value}"
 }
-

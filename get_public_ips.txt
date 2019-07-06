@@ -1,2 +1,0 @@
-aws ec2 describe-instances --filters "Name=tag:Name,Values=nomad-example-server" --query 'Reservations[*].Instances[*].PublicIpAddress'  --output text
-aws ec2 describe-instances --filters "Name=tag:Name,Values=nomad-example-client" --query 'Reservations[*].Instances[*].PublicIpAddress'  --output text
