@@ -1,3 +1,4 @@
 export TF_VAR_ssh_key_name="xxx"
+export TF_VAR_instance_type="t3.large"
 export TF_VAR_num_clients=4
 export TF_VAR_ami_id="ami-00bcebe96aee70eec"
